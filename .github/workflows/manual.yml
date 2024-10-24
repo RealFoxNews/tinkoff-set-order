@@ -44,7 +44,7 @@ jobs:
     - name: install dependencies
       run: python3 -m pip install -r requirements.txt
     - name: run bot
-      run: python3 -u main.py config.yml-sample
+      run: python3 src/run_trader.py ema -c config/ema_trader_moex.yaml
       env:
         INVEST_TOKEN: ${{ inputs.token }}
         ACCOUNT_ID: ${{ inputs.account_id }}
