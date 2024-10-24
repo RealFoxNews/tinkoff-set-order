@@ -53,4 +53,5 @@ jobs:
         INVEST_TOKEN: ${{ inputs.token }}
         ACCOUNT_ID: ${{ inputs.account_id }}
         SANDBOX_TOKEN: ${{ inputs.token }}
+        PYTHONPATH: ./:${PYTHONPATH}
         PYTHONUNBUFFERED: "1"
