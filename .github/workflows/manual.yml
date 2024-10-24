@@ -41,6 +41,10 @@ jobs:
         python-version: '3.9'
     - name: Display Python version
       run: python3 -c "import sys; print(sys.version)"
+    - name: Create venv
+      run: python3 -m venv ./venv
+    - name: activate venv
+      run: source venv/bin/activate
     - name: install dependencies
       run: python3 -m pip install -r requirements.txt
     - name: run bot
