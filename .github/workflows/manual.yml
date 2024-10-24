@@ -82,4 +82,5 @@ jobs:
         ORDER_TICKER: ${{ inputs.ticker }}
         ORDER_PRICE: ${{ inputs.units }}
         ORDER_QUANTITY: ${{ inputs.quantity }}
+        PYTHONPATH: ./:${PYTHONPATH}
         PYTHONUNBUFFERED: "1"
