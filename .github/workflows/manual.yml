@@ -22,6 +22,31 @@ on:
         default: ''
         required: true
         type: string
+            ticker:
+        description: 'Введите ticker:'
+        default: ''
+        required: true
+        type: string
+      quantity:
+        description: 'Введите количество:'
+        default: ''
+        required: true
+        type: string
+      direction:
+        description: 'Введите sell или buy:'
+        default: ''
+        required: true
+        type: string
+      units:
+        description: 'Введите целую часть цены:'
+        default: ''
+        required: true
+        type: string
+      nano:
+        description: 'Введите дробную часть цены(9 цифр):'
+        default: ''
+        required: true
+        type: string
 
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -53,5 +78,8 @@ jobs:
         INVEST_TOKEN: ${{ inputs.token }}
         ACCOUNT_ID: ${{ inputs.account_id }}
         SANDBOX_TOKEN: ${{ inputs.token }}
-        PYTHONPATH: ./:${PYTHONPATH}
+        ORDER_DIRECTION: ${{ inputs.direction }}
+        ORDER_TICKER: ${{ inputs.ticker }}
+        ORDER_PRICE: ${{ inputs.units }}
+        ORDER_QUANTITY: ${{ inputs.quantity }}
         PYTHONUNBUFFERED: "1"
