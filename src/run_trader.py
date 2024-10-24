@@ -26,11 +26,8 @@ async def main():
     trader_config = await prepare_trader_config(config)
     trader = trader_cls(trader_config)
 
-    # start the trader
-    if input(trader.initial_message()) == "yes":
-        await TraderRunner.start_trader_loop(trader)
-    else:
-        print("Declined. Trader hasn't been started")
+    await TraderRunner.start_trader_loop(trader)
+
 
 
 if __name__ == "__main__":
