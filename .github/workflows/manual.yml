@@ -22,7 +22,7 @@ on:
         default: ''
         required: true
         type: string
-            ticker:
+      ticker:
         description: 'Введите ticker:'
         default: ''
         required: true
