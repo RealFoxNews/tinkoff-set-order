@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import uuid
+import sys
 
 import tinkoff.invest
 
@@ -22,21 +23,17 @@ class TraderRunner:
     async def start_trader_loop(cls, trader: BaseTrader) -> None:
         """Start the trade loop with the given trader."""
         print("The trader has been started")
+        decisions = []
         while True:
             try:
-                # fetch data from the market
-                market_data = await cls._fetch_current_market_state(trader.trader_config)
-                # print(market_data)
-                # make decisions in accordance with the strategy
-                decisions = await trader.make_decisions(market_data)
+                decisions = await trader.make_decisions()
                 print(decisions)
                 # execute decisions, if any
                 await cls._execute_trader_decisions(decisions, trader.trader_config)
-                if decisions:
-                    break
                 # wait for the next step
             except:
-                pass
+                if len(decisions):
+                    sys.exit(0)
             finally:
                 await asyncio.sleep(trader.trader_config.config["decision_interval_s"])
 
@@ -91,6 +88,7 @@ class TraderRunner:
                 response = None
                 try:
                     response = await cls._execute_decision(services, trader_config, decision)
+                    # print(response.json())
                 except DecisionExecutionError:
                     print("error executing decision")
 

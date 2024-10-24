@@ -23,7 +23,7 @@ class BaseTrader(metaclass=abc.ABCMeta):
         return f"Are you sure you want to start the {self.name} trader? (yes/no)"
 
     @abc.abstractmethod
-    async def make_decisions(self, state: MarketState) -> List[TraderDecision]:
+    async def make_decisions(self) -> List[TraderDecision]:
         raise NotImplementedError
 
 

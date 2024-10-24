@@ -1,3 +1,4 @@
 rpc/
 tinkoff-contest/
 venv/
+.env
