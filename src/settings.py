@@ -9,7 +9,8 @@ FIGI = os.getenv("FIGI")
 
 ORDER_DIRECTION = os.getenv("ORDER_DIRECTION")
 ORDER_TICKER = os.getenv("ORDER_TICKER")
-ORDER_PRICE = os.getenv("ORDER_PRICE")
+ORDER_UNITS = os.getenv("ORDER_UNITS")
+ORDER_NANO = os.getenv("ORDER_NANO")
 ORDER_QUANTITY = os.getenv("ORDER_QUANTITY")
 
 assert INVEST_TOKEN is not None
