@@ -93,7 +93,7 @@ class TraderRunner:
                     print("error executing decision")
 
                 # log the decision and its execution result
-                await cls._log_algorithm_decision(trader_config, decision, response)
+                # await cls._log_algorithm_decision(trader_config, decision, response)
 
     @classmethod
     async def _execute_decision(cls, client, trader_config, decision):
