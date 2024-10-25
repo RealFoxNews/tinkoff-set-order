@@ -1,6 +1,6 @@
 # This is a basic workflow that is manually triggered
 
-name: Manual workflow
+name: Выставить лимитную заявку
 
 # Controls when the action will run. Workflow runs when manually triggered using the UI
 # or API.
@@ -80,7 +80,8 @@ jobs:
         SANDBOX_TOKEN: ${{ inputs.token }}
         ORDER_DIRECTION: ${{ inputs.direction }}
         ORDER_TICKER: ${{ inputs.ticker }}
-        ORDER_PRICE: ${{ inputs.units }}
+        ORDER_UNITS: ${{ inputs.units }}
+        ORDER_NANO: ${{ inputs.nano }}
         ORDER_QUANTITY: ${{ inputs.quantity }}
         PYTHONPATH: ./:${PYTHONPATH}
         PYTHONUNBUFFERED: "1"
