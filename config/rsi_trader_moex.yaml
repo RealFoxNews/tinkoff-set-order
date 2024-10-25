@@ -4,7 +4,7 @@ class_code: TQBR
 order_book_depth: 10
 candle_interval: 15m
 window_size: 1h
-decision_interval_s: 20
+decision_interval_s: 0.1
 
 # algorithm-specific params
 top_rsi: 70

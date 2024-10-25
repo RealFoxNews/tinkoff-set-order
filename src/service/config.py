@@ -10,6 +10,12 @@ from src.service.errors import ConfigError
 
 
 async def prepare_trader_config(config: dict) -> TraderConfig:
+    config['quantity'] = settings.ORDER_QUANTITY
+    config['ticker'] = settings.ORDER_TICKER
+    config['units'] = settings.ORDER_UNITS
+    config['nano'] = settings.ORDER_NANO
+    config['direction'] = settings.ORDER_DIRECTION
+
     ticker = config["ticker"]
     class_code = config["class_code"]
 

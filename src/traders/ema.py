@@ -12,7 +12,7 @@ class EMATrader(BaseTrader):
     async def make_decisions(self) -> List[TraderDecision]:
         rr = CreateOrder()
         CreateOrder.order_type = OrderType(1)
-        CreateOrder.order_direction = OrderDirection(2)
+        CreateOrder.order_direction = OrderDirection(2 if self.trader_config.config['direction'] == 'sell' else 1)
         CreateOrder.price = Quotation(units=self.trader_config.config['units'], nano=self.trader_config.config['nano'])
         CreateOrder.quantity = self.trader_config.config['quantity']
         return [rr]
