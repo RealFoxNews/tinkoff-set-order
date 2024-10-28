@@ -13,6 +13,6 @@ class EMATrader(BaseTrader):
         rr = CreateOrder()
         CreateOrder.order_type = OrderType(1)
         CreateOrder.order_direction = OrderDirection(2 if self.trader_config.config['direction'] == 'sell' else 1)
-        CreateOrder.price = Quotation(units=int(self.trader_config.config['units']), nano=int(self.trader_config.config['nano']))
+        CreateOrder.price = Quotation(units=int(self.trader_config.config['units']), nano=int(self.trader_config.config['nano'][:1]))
         CreateOrder.quantity = int(self.trader_config.config['quantity'])
         return [rr]
