@@ -22,6 +22,11 @@ on:
         default: ''
         required: true
         type: string
+      interval_seconds:
+        description: 'Интервал между заявками (0.1 сек, например):'
+        default: ''
+        required: true
+        type: string
       ticker:
         description: 'Введите ticker:'
         default: ''
@@ -83,5 +88,6 @@ jobs:
         ORDER_UNITS: ${{ inputs.units }}
         ORDER_NANO: ${{ inputs.nano }}
         ORDER_QUANTITY: ${{ inputs.quantity }}
+        INTERVAL_SECONDS: ${{ inputs.interval_seconds }}
         PYTHONPATH: ./:${PYTHONPATH}
         PYTHONUNBUFFERED: "1"

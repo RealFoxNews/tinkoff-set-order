@@ -15,6 +15,7 @@ async def prepare_trader_config(config: dict) -> TraderConfig:
     config['units'] = settings.ORDER_UNITS
     config['nano'] = settings.ORDER_NANO
     config['direction'] = settings.ORDER_DIRECTION
+    config["decision_interval_s"] = settings.INTERVAL_SECONDS
 
     ticker = config["ticker"]
     class_code = config["class_code"]
