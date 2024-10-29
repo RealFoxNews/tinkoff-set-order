@@ -31,8 +31,6 @@ class TraderRunner:
                 # execute decisions, if any
                 await cls._execute_trader_decisions(decisions, trader.trader_config)
                 # wait for the next step
-                if len(decisions):
-                    sys.exit(0)
             except:
                 if len(decisions):
                     sys.exit(0)
