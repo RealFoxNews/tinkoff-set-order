@@ -26,11 +26,12 @@ async def prepare_trader_config(config: dict) -> TraderConfig:
         # get id of the user account
         account_id = await _fetch_user_account_id(services, target_account_id=settings.ACCOUNT_ID)
 
+        # info = (await services.instruments.shares())
         # TODO: check schedule, buy, sell and api trade flags (MarketDataService.GetTradingStatus first)
         # check that the instrument is currently available for trading
         instrument_data = (
             await services.instruments.get_instrument_by(
-                id_type=InstrumentIdType.INSTRUMENT_ID_TYPE_TICKER, id=ticker, class_code=class_code
+                id_type=InstrumentIdType.INSTRUMENT_ID_TYPE_TICKER, id=ticker, class_code='TQCB'
             )
         ).instrument
         # schedule = await services.instruments.trading_schedules(
