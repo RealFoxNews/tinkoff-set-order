@@ -24,18 +24,18 @@ class TraderRunner:
         """Start the trade loop with the given trader."""
         print("The trader has been started")
         decisions = []
-        while True:
+        order_sent = False
+        while not order_sent:
             try:
                 decisions = await trader.make_decisions()
                 print(decisions)
-                # execute decisions, if any
-                if await cls._execute_trader_decisions(decisions, trader.trader_config):
-                    break
-            except:
+                if decisions:
+                    order_sent = await cls._execute_trader_decisions(decisions, trader.trader_config)
+            except Exception:
                 if len(decisions):
                     sys.exit(0)
-
-            await asyncio.sleep(trader.trader_config.config["decision_interval_s"])
+            if not order_sent:
+                await asyncio.sleep(trader.trader_config.config["decision_interval_s"])
 
 
     @classmethod
@@ -85,15 +85,12 @@ class TraderRunner:
                 settings.INVEST_TOKEN, sandbox_token=settings.SANDBOX_TOKEN, app_name=settings.APP_NAME
         ) as services:
             for decision in decisions:
-                response = None
                 try:
-                    response = await cls._execute_decision(services, trader_config, decision)
+                    await cls._execute_decision(services, trader_config, decision)
+                    success = True
                 except DecisionExecutionError:
                     print("error executing decision")
-
-                if response is not None:
-                    success = True
-                # await cls._log_algorithm_decision(trader_config, decision, response)
+                # await cls._log_algorithm_decision(trader_config, decision)
 
         return success
 
