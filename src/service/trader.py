@@ -29,13 +29,13 @@ class TraderRunner:
                 decisions = await trader.make_decisions()
                 print(decisions)
                 # execute decisions, if any
-                await cls._execute_trader_decisions(decisions, trader.trader_config)
-                # wait for the next step
+                if await cls._execute_trader_decisions(decisions, trader.trader_config):
+                    break
             except:
                 if len(decisions):
                     sys.exit(0)
-            finally:
-                await asyncio.sleep(trader.trader_config.config["decision_interval_s"])
+
+            await asyncio.sleep(trader.trader_config.config["decision_interval_s"])
 
 
     @classmethod
@@ -80,20 +80,22 @@ class TraderRunner:
 
     @classmethod
     async def _execute_trader_decisions(cls, decisions, trader_config):
+        success = False
         async with tinkoff.invest.AsyncClient(
                 settings.INVEST_TOKEN, sandbox_token=settings.SANDBOX_TOKEN, app_name=settings.APP_NAME
         ) as services:
             for decision in decisions:
-                # execute decision
                 response = None
                 try:
                     response = await cls._execute_decision(services, trader_config, decision)
-                    # print(response.json())
                 except DecisionExecutionError:
                     print("error executing decision")
 
-                # log the decision and its execution result
+                if response is not None:
+                    success = True
                 # await cls._log_algorithm_decision(trader_config, decision, response)
+
+        return success
 
     @classmethod
     async def _execute_decision(cls, client, trader_config, decision):
