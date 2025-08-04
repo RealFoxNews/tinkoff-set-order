@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import uuid
 import sys
+import time
 
 import tinkoff.invest
 
@@ -98,7 +99,8 @@ class TraderRunner:
     async def _execute_decision(cls, client, trader_config, decision):
         if isinstance(decision, CreateOrder):
             try:
-                return await client.orders.post_order(
+                start_time = time.perf_counter()
+                response = await client.orders.post_order(
                     order_id=str(uuid.uuid4()),
                     figi=trader_config.instrument_figi,
                     account_id=trader_config.account_id,
@@ -108,6 +110,9 @@ class TraderRunner:
                     price=decision.price,
                     quantity=decision.quantity,
                 )
+                elapsed_ms = (time.perf_counter() - start_time) * 1000
+                print(f"Order posted in {elapsed_ms:.2f} ms")
+                return response
             except Exception as exc:
                 print("unable to post the order", str(exc))
         elif isinstance(decision, CancelOrder):
