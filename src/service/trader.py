@@ -85,13 +85,16 @@ class TraderRunner:
         async with tinkoff.invest.AsyncClient(
                 settings.INVEST_TOKEN, sandbox_token=settings.SANDBOX_TOKEN, app_name=settings.APP_NAME
         ) as services:
-            for decision in decisions:
-                try:
-                    await cls._execute_decision(services, trader_config, decision)
-                    success = True
-                except DecisionExecutionError:
+            tasks = [
+                cls._execute_decision(services, trader_config, decision)
+                for decision in decisions
+            ]
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            for result in results:
+                if isinstance(result, Exception):
                     print("error executing decision")
-                # await cls._log_algorithm_decision(trader_config, decision)
+                elif result is not None:
+                    success = True
 
         return success
 
@@ -99,7 +102,7 @@ class TraderRunner:
     async def _execute_decision(cls, client, trader_config, decision):
         if isinstance(decision, CreateOrder):
             try:
-                start_time = time.perf_counter()
+                start_time_ns = time.perf_counter_ns()
                 response = await client.orders.post_order(
                     order_id=str(uuid.uuid4()),
                     figi=trader_config.instrument_figi,
@@ -110,7 +113,7 @@ class TraderRunner:
                     price=decision.price,
                     quantity=decision.quantity,
                 )
-                elapsed_ms = (time.perf_counter() - start_time) * 1000
+                elapsed_ms = (time.perf_counter_ns() - start_time_ns) / 1_000_000
                 print(f"Order posted in {elapsed_ms:.2f} ms")
                 return response
             except Exception as exc:
