@@ -1,21 +1,12 @@
-# This is a basic workflow that is manually triggered
-
 name: Выставить лимитную заявку
 
-# Controls when the action will run. Workflow runs when manually triggered using the UI
-# or API.
 on:
   workflow_dispatch:
-    # Inputs the workflow accepts.
     inputs:
       token:
-        # Friendly description to be shown in the UI instead of 'name'
         description: 'Введите INVEST_TOKEN:'
-        # Default value if no value is explicitly provided
         default: ''
-        # Input has to be provided for the workflow to run
         required: true
-        # The data type of the input
         type: string
       account_id:
         description: 'Введите ACCOUNT_ID:'
@@ -52,42 +43,50 @@ on:
         default: ''
         required: true
         type: string
+      delay_env:
+        description: 'Задержка старта: now / delay-5m / delay-15m / delay-1h'
+        required: true
+        default: 'now'
+        type: choice
+        options:
+          - now         # без задержки (окружение без правил)
+          - delay-5m    # окружение с Wait timer = 5 минут
+          - delay-15m   # окружение с Wait timer = 15 минут
+          - delay-1h    # окружение с Wait timer = 60 минут
 
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "greet"
   greet:
-    # The type of runner that the job will run on
+    # Триггерим ожидание до запуска раннера с помощью Environment Wait timer
+    environment: ${{ inputs.delay_env }}
     runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Runs a single command using the runners shell
-    - name: Checkout code
-      uses: actions/checkout@v4.1.7
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.9'
-    - name: Display Python version
-      run: python3 -c "import sys; print(sys.version)"
-    - name: Create venv
-      run: python3 -m venv ./venv
-    - name: activate venv
-      run: source venv/bin/activate
-    - name: install dependencies
-      run: python3 -m pip install -r requirements.txt
-    - name: run bot
-      run: python3 src/run_trader.py ema -c config/ema_trader_moex.yaml
-      env:
-        INVEST_TOKEN: ${{ inputs.token }}
-        ACCOUNT_ID: ${{ inputs.account_id }}
-        SANDBOX_TOKEN: ${{ inputs.token }}
-        ORDER_DIRECTION: ${{ inputs.direction }}
-        ORDER_TICKER: ${{ inputs.ticker }}
-        ORDER_UNITS: ${{ inputs.units }}
-        ORDER_NANO: ${{ inputs.nano }}
-        ORDER_QUANTITY: ${{ inputs.quantity }}
-        INTERVAL_SECONDS: ${{ inputs.interval_seconds }}
-        PYTHONPATH: ./:${PYTHONPATH}
-        PYTHONUNBUFFERED: "1"
+      - name: Checkout code
+        uses: actions/checkout@v4.1.7
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Run bot
+        env:
+          INVEST_TOKEN: ${{ inputs.token }}
+          ACCOUNT_ID: ${{ inputs.account_id }}
+          SANDBOX_TOKEN: ${{ inputs.token }}
+          ORDER_DIRECTION: ${{ inputs.direction }}
+          ORDER_TICKER: ${{ inputs.ticker }}
+          ORDER_UNITS: ${{ inputs.units }}
+          ORDER_NANO: ${{ inputs.nano }}
+          ORDER_QUANTITY: ${{ inputs.quantity }}
+          INTERVAL_SECONDS: ${{ inputs.interval_seconds }}
+          PYTHONPATH: ./
+          PYTHONUNBUFFERED: "1"
+        run: python src/run_trader.py ema -c config/ema_trader_moex.yaml
