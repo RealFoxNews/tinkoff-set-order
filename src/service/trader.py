@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import uuid
 import sys
+import time
 
 import tinkoff.invest
 
@@ -24,17 +25,17 @@ class TraderRunner:
         """Start the trade loop with the given trader."""
         print("The trader has been started")
         decisions = []
-        while True:
+        order_sent = False
+        while not order_sent:
             try:
                 decisions = await trader.make_decisions()
                 print(decisions)
-                # execute decisions, if any
-                await cls._execute_trader_decisions(decisions, trader.trader_config)
-                # wait for the next step
-            except:
+                if decisions:
+                    order_sent = await cls._execute_trader_decisions(decisions, trader.trader_config)
+            except Exception:
                 if len(decisions):
                     sys.exit(0)
-            finally:
+            if not order_sent:
                 await asyncio.sleep(trader.trader_config.config["decision_interval_s"])
 
 
@@ -80,26 +81,29 @@ class TraderRunner:
 
     @classmethod
     async def _execute_trader_decisions(cls, decisions, trader_config):
+        success = False
         async with tinkoff.invest.AsyncClient(
                 settings.INVEST_TOKEN, sandbox_token=settings.SANDBOX_TOKEN, app_name=settings.APP_NAME
         ) as services:
-            for decision in decisions:
-                # execute decision
-                response = None
-                try:
-                    response = await cls._execute_decision(services, trader_config, decision)
-                    # print(response.json())
-                except DecisionExecutionError:
+            tasks = [
+                cls._execute_decision(services, trader_config, decision)
+                for decision in decisions
+            ]
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            for result in results:
+                if isinstance(result, Exception):
                     print("error executing decision")
+                elif result is not None:
+                    success = True
 
-                # log the decision and its execution result
-                # await cls._log_algorithm_decision(trader_config, decision, response)
+        return success
 
     @classmethod
     async def _execute_decision(cls, client, trader_config, decision):
         if isinstance(decision, CreateOrder):
             try:
-                return await client.orders.post_order(
+                start_time_ns = time.perf_counter_ns()
+                response = await client.orders.post_order(
                     order_id=str(uuid.uuid4()),
                     figi=trader_config.instrument_figi,
                     account_id=trader_config.account_id,
@@ -109,6 +113,9 @@ class TraderRunner:
                     price=decision.price,
                     quantity=decision.quantity,
                 )
+                elapsed_ms = (time.perf_counter_ns() - start_time_ns) / 1_000_000
+                print(f"Order posted in {elapsed_ms:.2f} ms")
+                return response
             except Exception as exc:
                 print("unable to post the order", str(exc))
         elif isinstance(decision, CancelOrder):
