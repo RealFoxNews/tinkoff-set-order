@@ -18,7 +18,7 @@ async def prepare_trader_config(config: dict) -> TraderConfig:
     config["decision_interval_s"] = float(settings.INTERVAL_SECONDS)
 
     ticker = config["ticker"]
-    class_code = config["class_code"]
+    class_code = settings.ORDER_CLASS_CODE or config["class_code"]
 
     async with tinkoff.invest.AsyncClient(
         settings.INVEST_TOKEN, sandbox_token=settings.SANDBOX_TOKEN, app_name=settings.APP_NAME
@@ -31,7 +31,7 @@ async def prepare_trader_config(config: dict) -> TraderConfig:
         # check that the instrument is currently available for trading
         instrument_data = (
             await services.instruments.get_instrument_by(
-                id_type=InstrumentIdType.INSTRUMENT_ID_TYPE_TICKER, id=ticker, class_code='TQCB'
+                id_type=InstrumentIdType.INSTRUMENT_ID_TYPE_TICKER, id=ticker, class_code=class_code
             )
         ).instrument
         # schedule = await services.instruments.trading_schedules(

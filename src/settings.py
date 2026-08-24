@@ -12,7 +12,8 @@ ORDER_TICKER = os.getenv("ORDER_TICKER")
 ORDER_UNITS = os.getenv("ORDER_UNITS")
 ORDER_NANO = os.getenv("ORDER_NANO")
 ORDER_QUANTITY = os.getenv("ORDER_QUANTITY")
+ORDER_CLASS_CODE = os.getenv("ORDER_CLASS_CODE")
 INTERVAL_SECONDS = os.getenv("INTERVAL_SECONDS")
 
-assert INVEST_TOKEN is not None
-assert SANDBOX_TOKEN is not None
+assert INVEST_TOKEN, "INVEST_TOKEN is empty: pass the workflow input or set the INVEST_TOKEN repository secret"
+assert SANDBOX_TOKEN, "SANDBOX_TOKEN is empty: pass the workflow input or set the INVEST_TOKEN repository secret"

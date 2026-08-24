@@ -2,3 +2,7 @@ rpc/
 tinkoff-contest/
 venv/
 .env
+__pycache__/
+*.pyc
+.idea/
+.venv/

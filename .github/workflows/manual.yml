@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       token:
-        description: 'Введите INVEST_TOKEN:'
+        description: 'Введите INVEST_TOKEN (пусто — взять из секрета INVEST_TOKEN):'
         default: ''
-        required: true
+        required: false
         type: string
       account_id:
         description: 'Введите ACCOUNT_ID:'
@@ -43,6 +43,11 @@ on:
         default: ''
         required: true
         type: string
+      class_code:
+        description: 'Режим торгов: TQBR — акции, TQCB — облигации'
+        default: 'TQCB'
+        required: false
+        type: string
       delay_env:
         description: 'Задержка старта: now / delay-5m / delay-15m / delay-1h'
         required: true
@@ -55,7 +60,7 @@ on:
           - delay-1h    # окружение с Wait timer = 60 минут
 
 jobs:
-  greet:
+  place-order:
     # Триггерим ожидание до запуска раннера с помощью Environment Wait timer
     environment: ${{ inputs.delay_env }}
     runs-on: ubuntu-latest
@@ -66,7 +71,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.9'
+          python-version: '3.12'
 
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
@@ -81,14 +86,15 @@ jobs:
 
       - name: Run bot
         env:
-          INVEST_TOKEN: ${{ inputs.token }}
+          INVEST_TOKEN: ${{ inputs.token || secrets.INVEST_TOKEN }}
           ACCOUNT_ID: ${{ inputs.account_id }}
-          SANDBOX_TOKEN: ${{ inputs.token }}
+          SANDBOX_TOKEN: ${{ inputs.token || secrets.INVEST_TOKEN }}
           ORDER_DIRECTION: ${{ inputs.direction }}
           ORDER_TICKER: ${{ inputs.ticker }}
           ORDER_UNITS: ${{ inputs.units }}
           ORDER_NANO: ${{ inputs.nano }}
           ORDER_QUANTITY: ${{ inputs.quantity }}
+          ORDER_CLASS_CODE: ${{ inputs.class_code }}
           INTERVAL_SECONDS: ${{ inputs.interval_seconds }}
           PYTHONPATH: ./
           PYTHONUNBUFFERED: "1"
