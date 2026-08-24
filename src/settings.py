@@ -1,4 +1,10 @@
 import os
+from pathlib import Path
+
+# С 30.09.2025 API Т-Инвестиций использует TLS-сертификат от «Russian Trusted Root CA» (Минцифры РФ),
+# которого нет в наборе корней, вшитом в grpcio. Подсказываем grpc путь к корню, если не задан снаружи.
+_RU_TRUSTED_CA = Path(__file__).resolve().parent.parent / "certs" / "russian_trusted_root_ca.pem"
+os.environ.setdefault("GRPC_DEFAULT_SSL_ROOTS_FILE_PATH", str(_RU_TRUSTED_CA))
 
 INVEST_TOKEN = os.getenv("INVEST_TOKEN")
 SANDBOX_TOKEN = os.getenv("SANDBOX_TOKEN")
