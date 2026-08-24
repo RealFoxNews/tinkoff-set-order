@@ -1,2 +1,8 @@
 pyyaml
-tinkoff-investments
+# Зависимости tinkoff-investments — сам SDK удалён с PyPI (карантин)
+# и ставится отдельно: pip install --no-deps "git+https://github.com/RussianInvestments/invest-python.git@0.2.0-beta117"
+grpcio>=1.59.3
+protobuf>=4.25.1,<5
+cachetools>=5.2,<6
+python-dateutil>=2.8.2
+deprecation>=2.1.0
